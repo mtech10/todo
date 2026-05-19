@@ -1,0 +1,179 @@
+
+.todo-input {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background-color: #ffffff;
+  width: 100%;
+  height: fit-content;
+  max-width: 700px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+.todo-input-item {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-title-input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #202020;
+  width: 100%;
+}
+
+.task-title-input::placeholder {
+  color: #888;
+  font-weight: 500;
+}
+
+.task-desc-input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #666;
+  width: 100%;
+  resize: none;
+  font-family: inherit;
+}
+
+.task-desc-input::placeholder {
+  color: #aaa;
+}
+
+.action-buttons-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover, .action-btn.active {
+  background-color: #f5f5f5;
+  color: #202020;
+}
+
+.icon-only {
+  padding: 6px 8px;
+}
+
+.priority-container {
+  position: relative;
+}
+
+.priority-dropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 160px;
+  z-index: 100;
+  padding: 4px 0;
+}
+
+.priority-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #202020;
+  cursor: pointer;
+}
+
+.priority-option:hover {
+  background-color: #f5f5f5;
+}
+
+.check-icon {
+  margin-left: auto;
+  color: #db4c3f;
+}
+
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e5e5e5;
+  padding: 10px 16px;
+  background-color: #fafafa;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.bottom-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: #f5f5f5;
+  border: none;
+  color: #444;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background: #e5e5e5;
+}
+
+.submit-btn {
+  background: #db4c3f;
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit-btn:not(:disabled):hover {
+  background: #c53727;
+}
+
+.date-input-container {
+  position: relative;
+  display: flex;
+}
+
+.hidden-date-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
