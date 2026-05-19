@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        return { id: decoded.id, email: decoded.email }; 
+        return { id: decoded.id, email: decoded.email, username: decoded.username   }; 
       } catch (err) {
         console.error("Invalid token");
         localStorage.removeItem('token');
