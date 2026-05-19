@@ -5,14 +5,8 @@ import {
   FiSearch,
   FiInbox,
   FiCalendar,
-  FiGrid,
-  FiActivity,
-  FiChevronDown,
-  FiBell,
   FiSidebar,
   FiPlus,
-  FiHelpCircle,
-  FiHash,
   FiCheckCircle,
 } from "react-icons/fi";
 import { BsCalendar4Week } from "react-icons/bs";
@@ -28,6 +22,7 @@ const Sidebar = ({
 }) => {
   const [isInputVisible, setIsInputVisible] = useState(false);
   const { user, logout } = useAuth();
+  console.log("This is the user data I have:", user);
   const displayName =
     user?.username || "User";
 
@@ -41,7 +36,6 @@ const Sidebar = ({
           <span className="username">{displayName}</span>
         </div>
         <div className="header-actions">
-          <FiBell className="icon action-icon" />
           <FiSidebar className="icon action-icon" onClick={onClose} />
         </div>
       </div>
