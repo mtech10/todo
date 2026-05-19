@@ -29,7 +29,7 @@ const Sidebar = ({
   const [isInputVisible, setIsInputVisible] = useState(false);
   const { user, logout } = useAuth();
   const displayName =
-    user?.user_metadata?.username || user?.email?.split("@")[0] || "User";
+    user?.username || "User";
 
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
