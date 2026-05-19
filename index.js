@@ -86,13 +86,19 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcryptjs.hash(password, 10);
 
     const newUserResult = await pool.query(
-      "INSERT INTO users (first_name, last_name, username, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id, email",
+      "INSERT INTO users (first_name, last_name, username, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [first_name, last_name, username, email, hashedPassword],
     );
     const user = newUserResult.rows[0];
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, email: user.email, first_name: user.first_name, last_name: user.last_name },
+      {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+      },
       SECRET_KEY,
       { expiresIn: "1h" },
     );
@@ -138,14 +144,26 @@ app.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, username: user.username, first_name: user.first_name, last_name: user.last_name },
+      {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+      },
       SECRET_KEY,
     );
 
     return res.json({
       message: "Login successfully",
       token,
-      user: { id: user.id, email: user.email, username: user.username, first_name: user.first_name, last_name: user.last_name },
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+      },
     });
   } catch (err) {
     console.error("Login error:", err);
@@ -178,7 +196,7 @@ app.get("/profile", verifyToken, async (req, res) => {
     const userId = req.user.id;
 
     const result = await pool.query(
-      "SELECT id, email FROM users WHERE id = $1",
+      "SELECT id, email, username, first_name, last_name FROM users WHERE id = $1",
       [userId],
     );
 
