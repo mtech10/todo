@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
 
 app.post('/register', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { first_name, last_name, username, email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ message: 'All fields required' });
@@ -84,8 +84,8 @@ app.post('/register', async (req, res) => {
     const hashedPassword = await bcryptjs.hash(password, 10);
 
     const newUserResult =await pool.query(
-      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email',
-      [email, hashedPassword]
+      'INSERT INTO users (first_name, last_name, username, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id, email',
+      [first_name, last_name, username, email, hashedPassword]
     );
     const user = newUserResult.rows[0];
 

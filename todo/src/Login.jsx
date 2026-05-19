@@ -25,13 +25,17 @@ const Login = ({ switchToRegister }) => {
     <div className="auth-container">
       <h2>Welcome Back</h2>
       <form onSubmit={handleSubmit}>
-        <input 
+        
+        <div className="form-group">
+          <input 
           type="email" 
           value={email} 
           onChange={(e) => setEmail(e.target.value)} 
           placeholder="Email" 
           required 
         />
+        </div>
+         <div className="form-group">
         <input 
           type="password" 
           value={password} 
@@ -39,6 +43,7 @@ const Login = ({ switchToRegister }) => {
           placeholder="Password" 
           required 
         />
+        </div>
         <button type="submit">Log In</button>
       </form>
       <p>Don't have an account? <button onClick={switchToRegister}>Sign up</button></p>

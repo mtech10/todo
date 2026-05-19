@@ -1,15 +1,8 @@
 body {
-  background-color: black;
-  color: white;
   overflow-x: hidden;
 }
 
 .auth-container {
-  max-width: 400px;
-  margin: 80px auto;
-  padding: 40px 30px;
-  border-radius: 10px;
-  box-shadow: 1px 1px 7px rgba(255, 255, 255, 0.418);
   text-align: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -27,12 +20,11 @@ body {
 
 .auth-container input {
   padding: 14px;
-  background-color: #131212;
   outline: none;
   border: none;
   border-radius: 5px;
   color: white;
-  caret-color: #5882ff;
+  caret-color: #db4c3f;
   border: 1px solid #cccccc;
   border-radius: 6px;
   font-size: 16px;
@@ -41,16 +33,18 @@ body {
 
 .auth-container input:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #db4c3f;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
 
 .auth-container button[type="submit"] {
   padding: 14px;
-  background-color: #007bff;
+  background-color: #db4c3f;
   color: white;
   border: none;
   border-radius: 6px;
+  width: 400px;
+  margin: auto;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -59,7 +53,7 @@ body {
 }
 
 .auth-container button[type="submit"]:hover {
-  background-color: #0056b3;
+  background-color: #db4c3f;
 }
 
 .auth-container p {
@@ -71,7 +65,7 @@ body {
 .auth-container p button {
   background: none;
   border: none;
-  color: #007bff;
+  color: #db4c3f;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
@@ -81,5 +75,10 @@ body {
 
 .auth-container p button:hover {
   text-decoration: underline;
-  color: #0056b3;
+  color: #db4c3f;
+}
+
+.form-group input {
+  width: 400px;
+    margin: auto;
 }
