@@ -1,10 +1,10 @@
-import express from 'express';
-import pg from 'pg';
-import pkg from 'pg';
-import bcryptjs from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import cors from 'cors';
+import express from "express";
+import pg from "pg";
+import pkg from "pg";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -19,14 +19,17 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use(cors({
-  origin: ['https://todo-frontend-86pt.onrender.com',
-    'http://localhost:5173'
-  ],
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      "https://todo-frontend-86pt.onrender.com",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // const pool = new Pool({
@@ -42,121 +45,127 @@ app.use(express.json());
 //   database: process.env.DB_NAME,
 // });
 
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false 
-  }
+    rejectUnauthorized: false,
+  },
 });
 
-pool.on('connect', () => {
-  console.log('Successfully connected to the database!');
+pool.on("connect", () => {
+  console.log("Successfully connected to the database!");
 });
 
-pool.on('error', (err) => {
-  console.error('Unexpected database error:', err);
+pool.on("error", (err) => {
+  console.error("Unexpected database error:", err);
 });
 
-const SECRET_KEY = 'mysecretkey';
+const SECRET_KEY = "mysecretkey";
 
-app.get('/', (req, res) => { 
-  res.json({ message: 'Server is running' }); 
+app.get("/", (req, res) => {
+  res.json({ message: "Server is running" });
 });
 
-app.post('/register', async (req, res) => {
+app.post("/register", async (req, res) => {
   try {
     const { first_name, last_name, username, email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'All fields required' });
+      return res.status(400).json({ message: "All fields required" });
     }
 
     const existingUser = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
+      "SELECT * FROM users WHERE email = $1",
+      [email],
     );
 
     if (existingUser.rows.length > 0) {
-      return res.status(400).json({ message: 'Email already registered' });
+      return res.status(400).json({ message: "Email already registered" });
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    const newUserResult =await pool.query(
-      'INSERT INTO users (first_name, last_name, username, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id, email',
-      [first_name, last_name, username, email, hashedPassword]
+    const newUserResult = await pool.query(
+      "INSERT INTO users (first_name, last_name, username, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id, email",
+      [first_name, last_name, username, email, hashedPassword],
     );
     const user = newUserResult.rows[0];
 
     const token = jwt.sign(
-      { id: user.id, username:user.username, email: user.email },
+      { id: user.id, username: user.username, email: user.email },
       SECRET_KEY,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" },
     );
 
-    return res.json({ 
-      message: 'User registered successfully!', 
-      token, 
-      user: { id: user.id, email: user.email }
+    return res.json({
+      message: "User registered successfully!",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+      },
     });
   } catch (err) {
-    console.error('Register error:', err);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error("Register error:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
-app.post('/login', async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password required' });
+      return res.status(400).json({ message: "Email and password required" });
     }
 
-    const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
-    );
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const user = result.rows[0];
     const validPassword = await bcryptjs.compare(password, user.password);
 
     if (!validPassword) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
-      SECRET_KEY
+      { id: user.id, email: user.email, username: user.username },
+      SECRET_KEY,
     );
 
-    return res.json({ 
-      message: 'Login successfully', 
-      token, 
-      user: { id: user.id, email: user.email }
+    return res.json({
+      message: "Login successfully",
+      token,
+      user: { id: user.id, email: user.email, username: user.username },
     });
   } catch (err) {
-    console.error('Login error:', err);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error("Login error:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
 function verifyToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Access denied: No token provided' });
+    return res
+      .status(401)
+      .json({ message: "Access denied: No token provided" });
   }
 
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ message: 'Invalid or expired token' });
+      return res.status(403).json({ message: "Invalid or expired token" });
     }
 
     req.user = decoded;
@@ -164,33 +173,32 @@ function verifyToken(req, res, next) {
   });
 }
 
-app.get('/profile', verifyToken, async (req, res) => {
+app.get("/profile", verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
     const result = await pool.query(
-      'SELECT id, email FROM users WHERE id = $1',
-      [userId]
+      "SELECT id, email FROM users WHERE id = $1",
+      [userId],
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     return res.json({ user: result.rows[0] });
   } catch (err) {
-    console.error('Profile error:', err);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error("Profile error:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
-app.get('/tasks', verifyToken, async (req, res) => {
-  
+app.get("/tasks", verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
     const result = await pool.query(
-      'SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC',
-      [userId]
+      "SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC",
+      [userId],
     );
     res.json(result.rows);
   } catch (err) {
@@ -199,31 +207,28 @@ app.get('/tasks', verifyToken, async (req, res) => {
   }
 });
 
-app.post('/new-task', verifyToken, async (req, res) => {
-    
-    try {
-        const userId = req.user.id;
-        const { title, description, due_date, priority } = req.body;
-        const result = await pool.query(
-            'INSERT INTO todos (user_id, title, description, due_date, priority, is_complete) VALUES ($1, $2, $3, $4, $5, false) RETURNING *',
-            [userId, title, description, due_date, priority]
-        );
-        console.log('Task added successfully:', result.rows[0]);
-        res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error('Error adding task:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+app.post("/new-task", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { title, description, due_date, priority } = req.body;
+    const result = await pool.query(
+      "INSERT INTO todos (user_id, title, description, due_date, priority, is_complete) VALUES ($1, $2, $3, $4, $5, false) RETURNING *",
+      [userId, title, description, due_date, priority],
+    );
+    console.log("Task added successfully:", result.rows[0]);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error adding task:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-
-app.patch('/complete-task/:id', verifyToken, async (req, res) => {
-  
+app.patch("/complete-task/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      'UPDATE todos SET is_complete = true WHERE id = $1 RETURNING *',
-      [id]
+      "UPDATE todos SET is_complete = true WHERE id = $1 RETURNING *",
+      [id],
     );
 
     if (result.rows.length === 0) {
@@ -237,13 +242,12 @@ app.patch('/complete-task/:id', verifyToken, async (req, res) => {
   }
 });
 
-app.patch('/uncomplete-task/:id', verifyToken, async (req, res) => {
-  
+app.patch("/uncomplete-task/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      'UPDATE todos SET is_complete = false WHERE id = $1 RETURNING *',
-      [id]
+      "UPDATE todos SET is_complete = false WHERE id = $1 RETURNING *",
+      [id],
     );
 
     if (result.rows.length === 0) {
@@ -257,35 +261,33 @@ app.patch('/uncomplete-task/:id', verifyToken, async (req, res) => {
   }
 });
 
-app.patch('/edit-task/:id', verifyToken, async (req, res) => {
-  
+app.patch("/edit-task/:id", verifyToken, async (req, res) => {
   try {
-    const { id } = req.params; 
-    const { title, description} = req.body;
+    const { id } = req.params;
+    const { title, description } = req.body;
 
     const userId = req.user.id;
     const result = await pool.query(
-      'UPDATE todos SET title = $1, description = $2 WHERE id = $3 AND user_id = $4 RETURNING *',
-      [title, description, id, userId]
+      "UPDATE todos SET title = $1, description = $2 WHERE id = $3 AND user_id = $4 RETURNING *",
+      [title, description, id, userId],
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: " Task not found" })
+      return res.status(404).json({ error: " Task not found" });
     }
     res.json(result.rows[0]);
   } catch (err) {
-      console.error("Edit error:", err);
-      res.status(500).send("Server Error");
-    }
+    console.error("Edit error:", err);
+    res.status(500).send("Server Error");
+  }
 });
 
-app.delete('/delete-task/:id', verifyToken, async (req, res) => {
-  
+app.delete("/delete-task/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(
-      'DELETE FROM todos WHERE id = $1 RETURNING *',
-      [id]
+      "DELETE FROM todos WHERE id = $1 RETURNING *",
+      [id],
     );
 
     if (result.rows.length === 0) {
@@ -299,11 +301,10 @@ app.delete('/delete-task/:id', verifyToken, async (req, res) => {
   }
 });
 
-
-app.post('/logout', (req, res) => {
-  return res.json({ message: 'Logout successfully' });
+app.post("/logout", (req, res) => {
+  return res.json({ message: "Logout successfully" });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
 });
