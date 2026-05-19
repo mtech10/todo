@@ -92,7 +92,7 @@ app.post("/register", async (req, res) => {
     const user = newUserResult.rows[0];
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, email: user.email },
+      { id: user.id, username: user.username, email: user.email, first_name: user.first_name, last_name: user.last_name },
       SECRET_KEY,
       { expiresIn: "1h" },
     );
@@ -138,14 +138,14 @@ app.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, username: user.username },
+      { id: user.id, email: user.email, username: user.username, first_name: user.first_name, last_name: user.last_name },
       SECRET_KEY,
     );
 
     return res.json({
       message: "Login successfully",
       token,
-      user: { id: user.id, email: user.email, username: user.username },
+      user: { id: user.id, email: user.email, username: user.username, first_name: user.first_name, last_name: user.last_name },
     });
   } catch (err) {
     console.error("Login error:", err);
