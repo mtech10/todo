@@ -11,7 +11,7 @@ import { FaFlag } from "react-icons/fa";
 import { FiFlag } from "react-icons/fi";
 import axios from "axios";
 import "../Home/home.css";
-import purpleCalendarImg from "..Home/purple-calendar.png "; 
+import taskImg from "../Home/purple-calendar.png"; 
 import { useAuth } from "../AuthContext";
 
 const Home = () => {
@@ -277,7 +277,7 @@ const Home = () => {
                       ) : (
                         <>
                           <img
-                            src={purpleCalendarImg}
+                            src={taskImg}
                             alt="Calendar picture"
                             className="todo-header-img"
                           />
