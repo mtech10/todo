@@ -9,10 +9,12 @@ const Register = ({ switchToLogin }) => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     axios
       .post("https://todo-obxm.onrender.com/register", {
@@ -29,6 +31,9 @@ const Register = ({ switchToLogin }) => {
       })
       .catch((error) => {
         alert(error.response?.data?.message || "Registration failed");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -86,8 +91,12 @@ const Register = ({ switchToLogin }) => {
 
         
 
-        <button type="submit" className="auth-submit-btn">
-          Register
+        <button type="submit" className="auth-submit-btn" disabled={isLoading}>
+          {isLoading ? (
+            <span className="btn-spinner"></span>
+          ) : (
+            "Register"
+          )}
         </button>
       </form>
       <p>
