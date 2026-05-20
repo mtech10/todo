@@ -111,9 +111,6 @@ const Inputtask = ({ onAdd, onCancel }) => {
               className="hidden-date-input"
             />
           </div>
-          <button className="action-btn">
-            <FiPaperclip /> Attachment
-          </button>
 
           <div className="priority-container" ref={dropdownRef}>
             <button
@@ -144,13 +141,6 @@ const Inputtask = ({ onAdd, onCancel }) => {
               </div>
             )}
           </div>
-
-          <button className="action-btn">
-            <FiClock /> Reminders
-          </button>
-          <button className="action-btn icon-only">
-            <FiMoreHorizontal />
-          </button>
         </div>
       </div>
       <div className="bottom-bar">
